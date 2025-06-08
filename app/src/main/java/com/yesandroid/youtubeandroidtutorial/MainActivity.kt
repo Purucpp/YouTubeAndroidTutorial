@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yesandroid.youtubeandroidtutorial.api.MyViewModel
-import com.yesandroid.youtubeandroidtutorial.api.RawJsonViewModel
 import com.yesandroid.youtubeandroidtutorial.ui.theme.YouTubeAndroidTutorialTheme
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
