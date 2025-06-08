@@ -4,44 +4,107 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.yesandroid.youtubeandroidtutorial.ui.theme.YouTubeAndroidTutorialTheme
+import kotlinx.coroutines.launch
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
 
+// Data class for API response
+data class ApiResponse(val message: String)
+
+// Retrofit API interface
+interface ApiService {
+    @GET("/api/kt.json")
+    suspend fun getMessage(): ApiResponse
+}
+
+// Retrofit instance
+object ApiClient {
+    private const val BASE_URL = "https://yesandroid.com"
+
+    val apiService: ApiService = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(ApiService::class.java)
+}
+
+// ViewModel to handle API calls
+class ApiViewModel : ViewModel() {
+    var responseMessage by mutableStateOf("Click the button to get a message")
+        private set
+
+    fun fetchMessage() {
+        viewModelScope.launch {
+            try {
+                val response = ApiClient.apiService.getMessage()
+                responseMessage = response.message
+            } catch (e: Exception) {
+                responseMessage = "Error: ${e.message}"
+            }
+        }
+    }
+}
+
+// Main Activity
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
             YouTubeAndroidTutorialTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    ApiScreen(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
     }
 }
 
+// Composable Screen
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
+fun ApiScreen(modifier: Modifier = Modifier) {
+    val viewModel = remember { ApiViewModel() }
+    var isLoading by remember { mutableStateOf(false) }
+
+    Column(
         modifier = modifier
-    )
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+      //  Text(viewModel.responseMessage, modifier = Modifier.padding(bottom = 16.dp))
+
+        Button(onClick = {
+            isLoading = true
+            viewModel.fetchMessage()
+            isLoading = false
+        }) {
+            if (isLoading) {
+                CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)
+            } else {
+                Text("Fetch Message")
+            }
+        }
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun ApiScreenPreview() {
     YouTubeAndroidTutorialTheme {
-        Greeting("Android")
+        ApiScreen()
     }
 }
