@@ -28,42 +28,7 @@ import retrofit2.http.GET
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 
-// Data class for API response
-data class ApiResponse(val message: String)
 
-// Retrofit API interface
-interface ApiService {
-    @GET("/api/kt.json")
-    suspend fun getMessage(): ApiResponse
-}
-
-// Retrofit instance
-object ApiClient {
-    private const val BASE_URL = "https://yesandroid.com"
-
-    val apiService: ApiService = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-        .create(ApiService::class.java)
-}
-
-// ViewModel to handle API calls
-class ApiViewModel : ViewModel() {
-    var responseMessage by mutableStateOf("Click the button to get a message")
-        private set
-
-    fun fetchMessage() {
-        viewModelScope.launch {
-            try {
-                val response = ApiClient.apiService.getMessage()
-                responseMessage = response.message
-            } catch (e: Exception) {
-                responseMessage = "Error: ${e.message}"
-            }
-        }
-    }
-}
 
 // Main Activity
 class MainActivity : ComponentActivity() {
@@ -87,42 +52,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// Composable Screen
-@Composable
-fun ApiScreen(modifier: Modifier = Modifier) {
-    val viewModel = remember { ApiViewModel() }
-    var isLoading by remember { mutableStateOf(false) }
-
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-      //  Text(viewModel.responseMessage, modifier = Modifier.padding(bottom = 16.dp))
-
-        Button(onClick = {
-            isLoading = true
-            viewModel.fetchMessage()
-            isLoading = false
-        }) {
-            if (isLoading) {
-                CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)
-            } else {
-                Text("Fetch Message")
-            }
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ApiScreenPreview() {
-    YouTubeAndroidTutorialTheme {
-        ApiScreen()
-    }
-}
 
 
 @Composable
