@@ -88,7 +88,7 @@ fun MyScreenWithToolbar(viewModel: MyViewModel = viewModel()) {
         topBar = {
             TopAppBar(
                 title = {
-                    Text("My Toolbar", fontSize = 20.sp)
+                    Text("Retrofit", fontSize = 20.sp)
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
