@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "YouTube Android Tutorial"
 include(":app")
+include(":TestSdk")
