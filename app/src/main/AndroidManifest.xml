@@ -22,6 +22,8 @@
         tools:ignore="HardcodedDebugMode">
         <activity
             android:name=".MainActivityNew"
+            android:supportsPictureInPicture="true"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,6 +1,10 @@
 package com.yesandroid.youtubeandroidtutorial
 
+import android.app.Activity
+import android.app.PictureInPictureParams
+import android.os.Build
 import android.os.Bundle
+import android.util.Rational
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -58,4 +62,37 @@ class MainActivityNew : AppCompatActivity() {
         }
 
     }
+
+    override fun onBackPressed() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            enterPictureInPictureModeIfSupported(this)
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    override fun onUserLeaveHint() {
+        super.onUserLeaveHint()
+        enterPictureInPictureModeIfSupported(this)
+        // This is triggered when user presses the Home button or recent apps button
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+        }
+    }
+
+    fun enterPictureInPictureModeIfSupported(activity: Activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val aspectRatio = Rational(16, 9) // width:height
+            val pipParams = PictureInPictureParams.Builder()
+                .setAspectRatio(aspectRatio)
+                .build()
+            activity.enterPictureInPictureMode(pipParams)
+        }
+    }
+
+
+
+
+
+
 }
